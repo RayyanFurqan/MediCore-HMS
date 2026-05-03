@@ -1,79 +1,42 @@
 #include <SFML/Graphics.hpp>
+#include "Storage.h"
+#include "FileHandler.h"
+#include "Patient.h"
+#include "Doctor.h"
+#include "Admin.h"
+#include "Appointment.h"
+#include "Bill.h"
+#include "Prescription.h"
+#include "HospitalException.h"
 #include <iostream>
+using namespace std;
 
-int main()
-{
-    // Create a window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Test - Working!");
-    window.setFramerateLimit(60);
+//forward declare all screen functions
+void showMain(sf::RenderWindow&, sf::Font&, Storage<Patient>&, Storage<Doctor>&, Storage<Appointment>&, Storage<Bill>&, Storage<Prescription>&, Admin*&, FileHandler&);
 
-    // Create a circle
-    sf::CircleShape circle(50.f);
-    circle.setFillColor(sf::Color::Cyan);
-    circle.setOutlineThickness(3.f);
-    circle.setPosition(375.f, 275.f);
+int main() {
+    sf::RenderWindow win(sf::VideoMode(900, 650), "MediCore Hospital Management System");
+    win.setFramerateLimit(60);
 
-    // Load font for text
     sf::Font font;
-    bool fontLoaded = font.loadFromFile("arial.ttf"); // Make sure you have a font file
+    font.loadFromFile("Roboto-Regular.ttf");
 
-    sf::Text statusText;
-    if (fontLoaded) {
-        statusText.setFont(font);
-        statusText.setString("SFML is working!");
-        statusText.setCharacterSize(30);
-        statusText.setFillColor(sf::Color::Green);
-        statusText.setPosition(250.f, 50.f);
-    }
+    Storage<Patient> pts;
+    Storage<Doctor> drs;
+    Storage<Appointment> apts;
+    Storage<Bill> bls;
+    Storage<Prescription> prs;
+    Admin* adm = nullptr;
+    FileHandler fh;
+    fh.loadPatients(pts);
+    fh.loadDoctors(drs);
+    fh.loadAdmin(adm);
+    fh.loadAppointments(apts);
+    fh.loadBills(bls);
+    fh.loadPrescs(prs);
 
-    // Ball velocity for bouncing
-    sf::Vector2f velocity(3.f, 3.f);
+    showMain(win, font, pts, drs, apts, bls, prs, adm, fh);
 
-    std::cout << "SFML Window opened successfully!\n";
-    std::cout << "Close the window to exit.\n";
-
-    // Main loop
-    while (window.isOpen())
-    {
-        // Handle events
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-
-            if (event.type == sf::Event::KeyPressed &&
-                event.key.code == sf::Keyboard::Escape)
-                window.close();
-        }
-
-        // Move circle
-        circle.move(velocity);
-
-        // Bounce off walls
-        sf::Vector2f pos = circle.getPosition();
-        float radius = circle.getRadius();
-
-        if (pos.x <= 0 || pos.x + radius * 2 >= 800)
-            velocity.x = -velocity.x;
-        if (pos.y <= 0 || pos.y + radius * 2 >= 600)
-            velocity.y = -velocity.y;
-
-        // Change color on bounce (fun visual feedback)
-        circle.setFillColor(sf::Color(
-            rand() % 100 + 100,
-            rand() % 100 + 100,
-            rand() % 200 + 55
-        ));
-
-        // Draw
-        window.clear(sf::Color(20, 20, 40));
-        window.draw(circle);
-        if (fontLoaded)
-            window.draw(statusText);
-        window.display();
-    }
-
-    std::cout << "SFML test completed successfully!\n";
+    delete adm;
     return 0;
 }
