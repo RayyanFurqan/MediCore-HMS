@@ -28,15 +28,22 @@ int main() {
     Storage<Prescription> prs;
     Admin* adm = nullptr;
     FileHandler fh;
-    fh.loadPatients(pts);
-    fh.loadDoctors(drs);
-    fh.loadAdmin(adm);
-    fh.loadAppointments(apts);
-    fh.loadBills(bls);
-    fh.loadPrescs(prs);
+    try {
+        fh.loadPatients(pts);
+        fh.loadDoctors(drs);
+        fh.loadAdmin(adm);
+        fh.loadAppointments(apts);
+        fh.loadBills(bls);
+        fh.loadPrescs(prs);
+    }
+    catch (FileNotFoundException& e) {
+        cout << "Error: " << e.what() << endl;
+        return 0;
+    }
+ 
 
     showMain(win, font, pts, drs, apts, bls, prs, adm, fh);
 
     delete adm;
     return 0;
-}
+} 
