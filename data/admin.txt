@@ -1,0 +1,2 @@
+admin_id,name,contact,password
+1,Admin,0123456789,admin123

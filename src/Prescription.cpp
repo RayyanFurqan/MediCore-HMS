@@ -2,13 +2,13 @@
 using namespace std;
 
 Prescription::Prescription(int pr, int a, int p, int d, const char* dt, const char* m, const char* n) {
-    prid = pr;
-    apid = a;
-    pid = p;
-    did = d;
-    Validator::myCopy(date, dt, 15);
-    Validator::myCopy(meds, m, 500);
-    Validator::myCopy(notes, n, 300);
+	prid = pr;
+	apid = a;
+	pid = p;
+	did = d;
+	Validator::myCopy(date, dt, 15);
+	Validator::myCopy(meds, m, 500);
+	Validator::myCopy(notes, n, 300);
 }
 
 int Prescription::getId() const { return prid; }

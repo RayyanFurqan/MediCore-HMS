@@ -15,35 +15,37 @@ using namespace std;
 void showMain(sf::RenderWindow&, sf::Font&, Storage<Patient>&, Storage<Doctor>&, Storage<Appointment>&, Storage<Bill>&, Storage<Prescription>&, Admin*&, FileHandler&);
 
 int main() {
-    sf::RenderWindow win(sf::VideoMode(900, 650), "MediCore Hospital Management System");
-    win.setFramerateLimit(60);
+	sf::RenderWindow win(sf::VideoMode(900, 650), "MediCore Hospital Management System");
+	win.setFramerateLimit(60);
 
-    sf::Font font;
-    font.loadFromFile("Roboto-Regular.ttf");
+	sf::Font font;
+	if (!font.loadFromFile("./Roboto-Regular.ttf")) {
+		cout << "Error: Failed to load font file" << endl;
+		return 0;
+	}
 
-    Storage<Patient> pts;
-    Storage<Doctor> drs;
-    Storage<Appointment> apts;
-    Storage<Bill> bls;
-    Storage<Prescription> prs;
-    Admin* adm = nullptr;
-    FileHandler fh;
-    try {
-        fh.loadPatients(pts);
-        fh.loadDoctors(drs);
-        fh.loadAdmin(adm);
-        fh.loadAppointments(apts);
-        fh.loadBills(bls);
-        fh.loadPrescs(prs);
-    }
-    catch (FileNotFoundException& e) {
-        cout << "Error: " << e.what() << endl;
-        return 0;
-    }
- 
+	Storage<Patient> pts;
+	Storage<Doctor> drs;
+	Storage<Appointment> apts;
+	Storage<Bill> bls;
+	Storage<Prescription> prs;
+	Admin* adm = nullptr;
+	FileHandler fh;
+	try {
+		fh.loadPatients(pts);
+		fh.loadDoctors(drs);
+		fh.loadAdmin(adm);
+		fh.loadAppointments(apts);
+		fh.loadBills(bls);
+		fh.loadPrescs(prs);
+	}
+	catch (FileNotFoundException& e) {
+		cout << "Error: " << e.what() << endl;
+		return 0;
+	}
 
-    showMain(win, font, pts, drs, apts, bls, prs, adm, fh);
+	showMain(win, font, pts, drs, apts, bls, prs, adm, fh);
 
-    delete adm;
-    return 0;
-} 
+	delete adm;
+	return 0;
+}

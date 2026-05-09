@@ -3,36 +3,33 @@
 //base exception class
 class HospitalException {
 protected:
-    char message[200];
+	char message[200];
 public:
-    HospitalException(const char* msg);
-    virtual const char* what() const;
-    virtual ~HospitalException() {}
+	HospitalException(const char* msg);
+	virtual const char* what() const;
+	virtual ~HospitalException() {
+	}
 };
 
 class FileNotFoundException : public HospitalException {
 public:
-    FileNotFoundException(const char* m = "File not found.")
-        : HospitalException(m) {
-    }
+	FileNotFoundException(const char* m = "File not found.") : HospitalException(m) {
+	}
 };
 class InsufficientFundsException : public HospitalException {
 public:
-    InsufficientFundsException(const char* m = "Insufficient balance.")
-        : HospitalException(m) {
-    }
+	InsufficientFundsException(const char* m = "Insufficient balance.") : HospitalException(m) {
+	}
 };
 
 class InvalidInputException : public HospitalException {
 public:
-    InvalidInputException(const char* m = "Invalid input.")
-        : HospitalException(m) {
-    }
+	InvalidInputException(const char* m = "Invalid input.") : HospitalException(m) {
+	}
 };
 
 class SlotUnavailableException : public HospitalException {
 public:
-    SlotUnavailableException(const char* m = "Slot already taken.")
-        : HospitalException(m) {
-    }
+	SlotUnavailableException(const char* m = "Slot already taken.") : HospitalException(m) {
+	}
 };
