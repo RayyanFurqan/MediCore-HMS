@@ -1,2 +1,0 @@
-admin_id,name,password
-1,Admin,admin123
