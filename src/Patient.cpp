@@ -55,3 +55,4 @@ ostream& operator<<(ostream& os, const Patient& p) {
 	os << "[" << p.id << "] " << p.name << "  PKR " << p.balance << endl;
 	return os;
 }
+

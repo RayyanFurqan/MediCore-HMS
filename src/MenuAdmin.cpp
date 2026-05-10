@@ -169,11 +169,19 @@ void viewAllApts(sf::RenderWindow& win, sf::Font& font, Storage<Appointment>& ap
 	while (win.isOpen()) {
 		sf::Event e;
 		while (win.pollEvent(e)) {
-			if (e.type == sf::Event::Closed) win.close();
-			if (e.type == sf::Event::MouseWheelScrolled) { offset -= (int)e.mouseWheelScroll.delta * 30; }
-			if (isClick(e, 20, 20, 100, 35)) return;
+			if (e.type == sf::Event::Closed) {
+				win.close();
+			}
+			if (e.type == sf::Event::MouseWheelScrolled) {
+				offset -= (int)e.mouseWheelScroll.delta * 30;
+			}
+			if (isClick(e, 20, 20, 100, 35)) {
+				return;
+			}
 		}
-		if (offset < 0) offset = 0;
+		if (offset < 0) {
+			offset = 0;
+		}
 		win.clear(sf::Color(18, 32, 65));
 		drawTxt(win, "All Appointments", 300, 30, font, 26, sf::Color::White);
 		drawBtn(win, 20, 20, 100, 35, "Back", font, sf::Color(70, 70, 90), sf::Color::White);
@@ -194,11 +202,19 @@ void viewAllBills(sf::RenderWindow& win, sf::Font& font, Storage<Bill>& bls) {
 	while (win.isOpen()) {
 		sf::Event e;
 		while (win.pollEvent(e)) {
-			if (e.type == sf::Event::Closed) win.close();
-			if (e.type == sf::Event::MouseWheelScrolled) { offset -= (int)e.mouseWheelScroll.delta * 30; }
-			if (isClick(e, 20, 20, 100, 35)) return;
+			if (e.type == sf::Event::Closed) {
+				win.close();
+			}
+			if (e.type == sf::Event::MouseWheelScrolled) {
+				offset -= (int)e.mouseWheelScroll.delta * 30;
+			}
+			if (isClick(e, 20, 20, 100, 35)) {
+				return;
+			}
 		}
-		if (offset < 0) offset = 0;
+		if (offset < 0) {
+			offset = 0;
+		}
 		win.clear(sf::Color(18, 32, 65));
 		drawTxt(win, "All Bills", 360, 30, font, 26, sf::Color::White);
 		drawBtn(win, 20, 20, 100, 35, "Back", font, sf::Color(70, 70, 90), sf::Color::White);
@@ -263,11 +279,19 @@ void viewAllPatientsAdmin(sf::RenderWindow& win, sf::Font& font, Storage<Patient
 	while (win.isOpen()) {
 		sf::Event e;
 		while (win.pollEvent(e)) {
-			if (e.type == sf::Event::Closed) win.close();
-			if (e.type == sf::Event::MouseWheelScrolled) { offset -= (int)e.mouseWheelScroll.delta * 30; }
-			if (isClick(e, 20, 20, 100, 35)) return;
+			if (e.type == sf::Event::Closed) {
+				win.close();
+			}
+			if (e.type == sf::Event::MouseWheelScrolled) {
+				offset -= (int)e.mouseWheelScroll.delta * 30;
+			}
+			if (isClick(e, 20, 20, 100, 35)) {
+				return;
+			}
 		}
-		if (offset < 0) offset = 0;
+		if (offset < 0) {
+			offset = 0;
+		}
 		win.clear(sf::Color(18, 32, 65));
 		drawTxt(win, "All Patients", 300, 30, font, 26, sf::Color::White);
 		drawBtn(win, 20, 20, 100, 35, "Back", font, sf::Color(70, 70, 90), sf::Color::White);
@@ -288,11 +312,19 @@ void viewAllDoctorsAdmin(sf::RenderWindow& win, sf::Font& font, Storage<Doctor>&
 	while (win.isOpen()) {
 		sf::Event e;
 		while (win.pollEvent(e)) {
-			if (e.type == sf::Event::Closed) win.close();
-			if (e.type == sf::Event::MouseWheelScrolled) { offset -= (int)e.mouseWheelScroll.delta * 30; }
-			if (isClick(e, 20, 20, 100, 35)) return;
+			if (e.type == sf::Event::Closed) {
+				win.close();
+			}
+			if (e.type == sf::Event::MouseWheelScrolled) {
+				offset -= (int)e.mouseWheelScroll.delta * 30;
+			}
+			if (isClick(e, 20, 20, 100, 35)) {
+				return;
+			}
 		}
-		if (offset < 0) offset = 0;
+		if (offset < 0) {
+			offset = 0;
+		}
 		win.clear(sf::Color(18, 32, 65));
 		drawTxt(win, "All Doctors", 300, 30, font, 26, sf::Color::White);
 		drawBtn(win, 20, 20, 100, 35, "Back", font, sf::Color(70, 70, 90), sf::Color::White);
@@ -313,11 +345,19 @@ void viewAllAppointmentsAdmin(sf::RenderWindow& win, sf::Font& font, Storage<App
 	while (win.isOpen()) {
 		sf::Event e;
 		while (win.pollEvent(e)) {
-			if (e.type == sf::Event::Closed) win.close();
-			if (e.type == sf::Event::MouseWheelScrolled) { offset -= (int)e.mouseWheelScroll.delta * 30; }
-			if (isClick(e, 20, 20, 100, 35)) return;
+			if (e.type == sf::Event::Closed) {
+				win.close();
+			}
+			if (e.type == sf::Event::MouseWheelScrolled) {
+				offset -= (int)e.mouseWheelScroll.delta * 30;
+			}
+			if (isClick(e, 20, 20, 100, 35)) {
+				return;
+			}
 		}
-		if (offset < 0) offset = 0;
+		if (offset < 0) {
+			offset = 0;
+		}
 		win.clear(sf::Color(18, 32, 65));
 		drawTxt(win, "All Appointments", 300, 30, font, 26, sf::Color::White);
 		drawBtn(win, 20, 20, 100, 35, "Back", font, sf::Color(70, 70, 90), sf::Color::White);
@@ -339,11 +379,19 @@ void viewUnpaidBillsAdmin(sf::RenderWindow& win, sf::Font& font, Storage<Bill>& 
 	while (win.isOpen()) {
 		sf::Event e;
 		while (win.pollEvent(e)) {
-			if (e.type == sf::Event::Closed) win.close();
-			if (e.type == sf::Event::MouseWheelScrolled) { offset -= (int)e.mouseWheelScroll.delta * 30; }
-			if (isClick(e, 20, 20, 100, 35)) return;
+			if (e.type == sf::Event::Closed) {
+				win.close();
+			}
+			if (e.type == sf::Event::MouseWheelScrolled) {
+				offset -= (int)e.mouseWheelScroll.delta * 30;
+			}
+			if (isClick(e, 20, 20, 100, 35)) {
+				return;
+			}
 		}
-		if (offset < 0) offset = 0;
+		if (offset < 0) {
+			offset = 0;
+		}
 		win.clear(sf::Color(18, 32, 65));
 		drawTxt(win, "Unpaid Bills", 300, 30, font, 26, sf::Color::White);
 		drawBtn(win, 20, 20, 100, 35, "Back", font, sf::Color(70, 70, 90), sf::Color::White);
@@ -367,11 +415,19 @@ void viewSecurityLogAdmin(sf::RenderWindow& win, sf::Font& font, FileHandler& fh
 	while (win.isOpen()) {
 		sf::Event e;
 		while (win.pollEvent(e)) {
-			if (e.type == sf::Event::Closed) win.close();
-			if (e.type == sf::Event::MouseWheelScrolled) { offset -= (int)e.mouseWheelScroll.delta * 30; }
-			if (isClick(e, 20, 20, 100, 35)) return;
+			if (e.type == sf::Event::Closed) {
+				win.close();
+			}
+			if (e.type == sf::Event::MouseWheelScrolled) {
+				offset -= (int)e.mouseWheelScroll.delta * 30;
+			}
+			if (isClick(e, 20, 20, 100, 35)) {
+				return;
+			}
 		}
-		if (offset < 0) offset = 0;
+		if (offset < 0) {
+			offset = 0;
+		}
 		win.clear(sf::Color(18, 32, 65));
 		drawTxt(win, "Security Log", 360, 30, font, 26, sf::Color::White);
 		drawBtn(win, 20, 20, 100, 35, "Back", font, sf::Color(70, 70, 90), sf::Color::White);
@@ -463,7 +519,7 @@ void dailyReportAdmin(sf::RenderWindow& win, sf::Font& font, Storage<Patient>& p
 			}
 		}
 		
-		// Doctor-wise summary for today
+		// Doctor wise summary for today
 		char doctorSummary[500] = "";
 		for (int i = 0; i < drs.size(); i++) {
 			Doctor& d = drs.getAll()[i];

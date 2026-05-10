@@ -13,18 +13,23 @@ Appointment::Appointment(int a, int p, int d, const char* dt, const char* sl, co
 int Appointment::getId() const {
 	return aid;
 }
+
 int Appointment::getPid() const {
 	return pid;
 }
+
 int Appointment::getDid() const {
 	return did;
 }
+
 const char* Appointment::getDate() const {
 	return date;
 }
+
 const char* Appointment::getSlot() const {
 	return slot;
 }
+
 const char* Appointment::getStat() const {
 	return status;
 }
@@ -33,6 +38,7 @@ void Appointment::setStat(const char* s) {
 	Validator::myCopy(status, s, 20);
 }
 
+// Check if two appointments conflict (same doctor, date, slot)
 bool Appointment::operator==(const Appointment& o) const {
 	if (Validator::myEq(status, "cancelled")) {
 		return false;

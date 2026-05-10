@@ -11,10 +11,30 @@ Prescription::Prescription(int pr, int a, int p, int d, const char* dt, const ch
 	Validator::myCopy(notes, n, 300);
 }
 
-int Prescription::getId() const { return prid; }
-int Prescription::getApid() const { return apid; }
-int Prescription::getPid() const { return pid; }
-int Prescription::getDid() const { return did; }
-const char* Prescription::getDate() const { return date; }
-const char* Prescription::getMeds() const { return meds; }
-const char* Prescription::getNotes() const { return notes; }
+int Prescription::getId() const {
+	return prid;
+}
+
+int Prescription::getApid() const {
+	return apid;
+}
+
+int Prescription::getPid() const {
+	return pid;
+}
+
+int Prescription::getDid() const {
+	return did;
+}
+
+const char* Prescription::getDate() const {
+	return date;
+}
+
+const char* Prescription::getMeds() const {
+	return meds;
+}
+
+const char* Prescription::getNotes() const {
+	return notes;
+}

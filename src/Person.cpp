@@ -16,6 +16,7 @@ int Person::getId() const {
 const char* Person::getName() const {
 	return name;
 }
+
 const char* Person::getPass() const {
 	return password;
 }

@@ -132,10 +132,7 @@ void bookAppt(sf::RenderWindow& win, sf::Font& font, Patient* p, Storage<Doctor>
 						bool slotTaken = false;
 						for (int i = 0; i < apts.size(); i++) {
 							Appointment& a = apts.getAll()[i];
-							if (a.getDid() == selectedDoctor->getId() && 
-								Validator::myEq(a.getDate(), date) && 
-								Validator::myEq(a.getSlot(), slot) && 
-								!Validator::myEq(a.getStat(), "cancelled")) {
+							if (a.getDid() == selectedDoctor->getId() && Validator::myEq(a.getDate(), date) && Validator::myEq(a.getSlot(), slot) && !Validator::myEq(a.getStat(), "cancelled")) {
 								slotTaken = true;
 								break;
 							}
@@ -216,10 +213,7 @@ void bookAppt(sf::RenderWindow& win, sf::Font& font, Patient* p, Storage<Doctor>
 				bool slotAvailable = true;
 				for (int j = 0; j < apts.size(); j++) {
 					Appointment& a = apts.getAll()[j];
-					if (a.getDid() == selectedDoctor->getId() && 
-						Validator::myEq(a.getDate(), date) && 
-						Validator::myEq(a.getSlot(), slots[i]) && 
-						!Validator::myEq(a.getStat(), "cancelled")) {
+					if (a.getDid() == selectedDoctor->getId() && Validator::myEq(a.getDate(), date) && Validator::myEq(a.getSlot(), slots[i]) && !Validator::myEq(a.getStat(), "cancelled")) {
 						slotAvailable = false;
 						break;
 					}
@@ -364,7 +358,9 @@ void viewMyAppointments(sf::RenderWindow& win, sf::Font& font, Patient* p, Stora
 			if (e.type == sf::Event::Closed) {
 				win.close();
 			}
-			if (e.type == sf::Event::MouseWheelScrolled) { offset -= (int)e.mouseWheelScroll.delta * 30; }
+			if (e.type == sf::Event::MouseWheelScrolled) {
+				offset -= (int)e.mouseWheelScroll.delta * 30;
+			}
 			if (isClick(e, 20, 20, 100, 35)) {
 				return;
 			}
@@ -425,7 +421,9 @@ void viewMyMedicalRecords(sf::RenderWindow& win, sf::Font& font, Patient* p, Sto
 			if (e.type == sf::Event::Closed) {
 				win.close();
 			}
-			if (e.type == sf::Event::MouseWheelScrolled) { offset -= (int)e.mouseWheelScroll.delta * 30; }
+			if (e.type == sf::Event::MouseWheelScrolled) {
+				offset -= (int)e.mouseWheelScroll.delta * 30;
+			}
 			if (isClick(e, 20, 20, 100, 35)) {
 				return;
 			}
@@ -486,7 +484,9 @@ void viewMyBills(sf::RenderWindow& win, sf::Font& font, Patient* p, Storage<Bill
 			if (e.type == sf::Event::Closed) {
 				win.close();
 			}
-			if (e.type == sf::Event::MouseWheelScrolled) { offset -= (int)e.mouseWheelScroll.delta * 30; }
+			if (e.type == sf::Event::MouseWheelScrolled) {
+				offset -= (int)e.mouseWheelScroll.delta * 30;
+			}
 			if (isClick(e, 20, 20, 100, 35)) {
 				return;
 			}

@@ -262,7 +262,9 @@ void viewHist(sf::RenderWindow& win, sf::Font& font, Doctor* d, Storage<Appointm
 			if (e.type == sf::Event::Closed) {
 				win.close();
 			}
-			if (e.type == sf::Event::MouseWheelScrolled) { offset -= (int)e.mouseWheelScroll.delta * 30; }
+			if (e.type == sf::Event::MouseWheelScrolled) {
+				offset -= (int)e.mouseWheelScroll.delta * 30;
+			}
 			if (isClick(e, 20, 20, 100, 35)) {
 				return;
 			}
@@ -346,7 +348,9 @@ void viewPatientPrescriptions(sf::RenderWindow& win, sf::Font& font, Doctor* d, 
 			if (e.type == sf::Event::Closed) {
 				win.close();
 			}
-			if (e.type == sf::Event::MouseWheelScrolled) { offset -= (int)e.mouseWheelScroll.delta * 30; }
+			if (e.type == sf::Event::MouseWheelScrolled) {
+				offset -= (int)e.mouseWheelScroll.delta * 30;
+			}
 			if (isClick(e, 20, 20, 100, 35)) {
 				return;
 			}

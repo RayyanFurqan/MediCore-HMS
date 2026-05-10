@@ -6,42 +6,45 @@
 #include <ctime>
 using namespace std;
 
-//split csv line into fields array
+// Split CSV line into fields
 void FileHandler::parseLine(char* line, char** fields, int& n) {
 	int fi = 0;
 	int ci = 0;
-	for (int i = 0; line[i] != '\0' && line[i] != '\n' && line[i] != '\r'; i++) {
-		if (line[i] == ',') {
-			fields[fi][ci] = '\0';
+	int i = 0;
+	while (*(line + i) != '\0' && *(line + i) != '\n' && *(line + i) != '\r') {
+		if (*(line + i) == ',') {
+			*(*(fields + fi) + ci) = '\0';
 			fi++;
 			ci = 0;
 		}
 		else {
 			if (ci < 299) {
-				fields[fi][ci] = line[i];
+				*(*(fields + fi) + ci) = *(line + i);
 				ci++;
 			}
 		}
+		i++;
 	}
-	fields[fi][ci] = '\0';
+	*(*(fields + fi) + ci) = '\0';
 	n = fi + 1;
 }
 
+// Join fields back into CSV line
 void FileHandler::rebuildLine(char* line, char** fields, int n) {
 	int pos = 0;
 	for (int f = 0; f < n; f++) {
 		int c = 0;
-		while (fields[f][c] != '\0') {
-			line[pos] = fields[f][c];
+		while (*(*(fields + f) + c) != '\0') {
+			*(line + pos) = *(*(fields + f) + c);
 			pos++;
 			c++;
 		}
 		if (f < n - 1) {
-			line[pos] = ',';
+			*(line + pos) = ',';
 			pos++;
 		}
 	}
-	line[pos] = '\0';
+	*(line + pos) = '\0';
 }
 
 void FileHandler::loadPatients(Storage<Patient>& s) {
@@ -56,29 +59,21 @@ void FileHandler::loadPatients(Storage<Patient>& s) {
 			first = false;
 			continue;
 		}
-		if (line[0] == '\0') {
+		if (*line == '\0') {
 			continue;
 		}
 		char** flds = new char* [20];
 		for (int i = 0; i < 20; i++) {
-			flds[i] = new char[300];
+			*(flds + i) = new char[300];
 		}
 		int n = 0;
 		parseLine(line, flds, n);
 		if (n >= 7) {
-			Patient p(
-				Validator::toInt(flds[0]),
-				flds[1],
-				Validator::toInt(flds[2]),
-				flds[3],
-				flds[4],
-				flds[5],
-				Validator::toFloat(flds[6])
-			);
+			Patient p(Validator::toInt(*(flds + 0)), *(flds + 1), Validator::toInt(*(flds + 2)), *(flds + 3), *(flds + 4), *(flds + 5), Validator::toFloat(*(flds + 6)));
 			s.add(p);
 		}
 		for (int i = 0; i < 20; i++) {
-			delete[] flds[i];
+			delete[] *(flds + i);
 		}
 		delete[] flds;
 	}
@@ -86,6 +81,7 @@ void FileHandler::loadPatients(Storage<Patient>& s) {
 	f.close();
 }
 
+// Load doctors from file
 void FileHandler::loadDoctors(Storage<Doctor>& s) {
 	ifstream f("data/doctors.txt");
 	if (!f.is_open()) {
@@ -98,28 +94,21 @@ void FileHandler::loadDoctors(Storage<Doctor>& s) {
 			first = false;
 			continue;
 		}
-		if (line[0] == '\0') {
+		if (*line == '\0') {
 			continue;
 		}
 		char** flds = new char* [20];
 		for (int i = 0; i < 20; i++) {
-			flds[i] = new char[300];
+			*(flds + i) = new char[300];
 		}
 		int n = 0;
 		parseLine(line, flds, n);
 		if (n >= 6) {
-			Doctor d(
-				Validator::toInt(flds[0]),    // id
-				flds[1],                    // name  
-				flds[2],                    // spec
-				Validator::toFloat(flds[5]), // fee (field 5)
-				flds[3],                    // contact (field 3)
-				flds[4]                     // pass (field 4)
-			);
+			Doctor d(Validator::toInt(*(flds + 0)), *(flds + 1), *(flds + 2), Validator::toFloat(*(flds + 5)), *(flds + 3), *(flds + 4));
 			s.add(d);
 		}
 		for (int i = 0; i < 20; i++) {
-			delete[] flds[i];
+			delete[] *(flds + i);
 		}
 		delete[] flds;
 	}
@@ -127,6 +116,7 @@ void FileHandler::loadDoctors(Storage<Doctor>& s) {
 	f.close();
 }
 
+// Load admin from file
 void FileHandler::loadAdmin(Admin*& ptr) {
 	ifstream f("data/admin.txt");
 	if (!f.is_open()) {
@@ -139,26 +129,21 @@ void FileHandler::loadAdmin(Admin*& ptr) {
 			first = false;
 			continue;
 		}
-		if (line[0] == '\0') {
+		if (*line == '\0') {
 			continue;
 		}
 		char** flds = new char* [20];
 		for (int i = 0; i < 20; i++) {
-			flds[i] = new char[300];
+			*(flds + i) = new char[300];
 		}
 		int n = 0;
 		parseLine(line, flds, n);
 		if (n >= 3) {
-			ptr = new Admin(
-				Validator::toInt(flds[0]),
-				flds[1],
-				flds[2],
-				(n >= 4) ? flds[3] : ""
-			);
+			ptr = new Admin(Validator::toInt(*(flds + 0)), *(flds + 1), *(flds + 2), (n >= 4) ? *(flds + 3) : "");
 			break;
 		}
 		for (int i = 0; i < 20; i++) {
-			delete[] flds[i];
+			delete[] *(flds + i);
 		}
 		delete[] flds;
 	}
@@ -166,6 +151,7 @@ void FileHandler::loadAdmin(Admin*& ptr) {
 	f.close();
 }
 
+// Load appointments from file
 void FileHandler::loadAppointments(Storage<Appointment>& s) {
 	ifstream f("data/appointments.txt");
 	if (!f.is_open()) {
@@ -178,28 +164,21 @@ void FileHandler::loadAppointments(Storage<Appointment>& s) {
 			first = false;
 			continue;
 		}
-		if (line[0] == '\0') {
+		if (*line == '\0') {
 			continue;
 		}
 		char** flds = new char* [20];
 		for (int i = 0; i < 20; i++) {
-			flds[i] = new char[300];
+			*(flds + i) = new char[300];
 		}
 		int n = 0;
 		parseLine(line, flds, n);
 		if (n >= 6) {
-			Appointment a(
-				Validator::toInt(flds[0]),
-				Validator::toInt(flds[1]),
-				Validator::toInt(flds[2]),
-				flds[3],
-				flds[4],
-				flds[5]
-			);
+			Appointment a(Validator::toInt(*(flds + 0)), Validator::toInt(*(flds + 1)), Validator::toInt(*(flds + 2)), *(flds + 3), *(flds + 4), *(flds + 5));
 			s.add(a);
 		}
 		for (int i = 0; i < 20; i++) {
-			delete[] flds[i];
+			delete[] *(flds + i);
 		}
 		delete[] flds;
 	}
@@ -207,6 +186,7 @@ void FileHandler::loadAppointments(Storage<Appointment>& s) {
 	f.close();
 }
 
+// Load bills from file
 void FileHandler::loadBills(Storage<Bill>& s) {
 	ifstream f("data/bills.txt");
 	if (!f.is_open()) {
@@ -219,28 +199,21 @@ void FileHandler::loadBills(Storage<Bill>& s) {
 			first = false;
 			continue;
 		}
-		if (line[0] == '\0') {
+		if (*line == '\0') {
 			continue;
 		}
 		char** flds = new char* [20];
 		for (int i = 0; i < 20; i++) {
-			flds[i] = new char[300];
+			*(flds + i) = new char[300];
 		}
 		int n = 0;
 		parseLine(line, flds, n);
 		if (n >= 6) {
-			Bill b(
-				Validator::toInt(flds[0]),
-				Validator::toInt(flds[1]),
-				Validator::toInt(flds[2]),
-				Validator::toFloat(flds[3]),
-				flds[4],
-				flds[5]
-			);
+			Bill b(Validator::toInt(*(flds + 0)), Validator::toInt(*(flds + 1)), Validator::toInt(*(flds + 2)), Validator::toFloat(*(flds + 3)), *(flds + 4), *(flds + 5));
 			s.add(b);
 		}
 		for (int i = 0; i < 20; i++) {
-			delete[] flds[i];
+			delete[] *(flds + i);
 		}
 		delete[] flds;
 	}
@@ -248,6 +221,7 @@ void FileHandler::loadBills(Storage<Bill>& s) {
 	f.close();
 }
 
+// Load prescriptions from file
 void FileHandler::loadPrescs(Storage<Prescription>& s) {
 	ifstream f("data/prescriptions.txt");
 	if (!f.is_open()) {
@@ -260,29 +234,21 @@ void FileHandler::loadPrescs(Storage<Prescription>& s) {
 			first = false;
 			continue;
 		}
-		if (line[0] == '\0') {
+		if (*line == '\0') {
 			continue;
 		}
 		char** flds = new char* [20];
 		for (int i = 0; i < 20; i++) {
-			flds[i] = new char[300];
+			*(flds + i) = new char[300];
 		}
 		int n = 0;
 		parseLine(line, flds, n);
 		if (n >= 7) {
-			Prescription p(
-				Validator::toInt(flds[0]),
-				Validator::toInt(flds[1]),
-				Validator::toInt(flds[2]),
-				Validator::toInt(flds[3]),
-				flds[4],
-				flds[5],
-				flds[6]
-			);
+			Prescription p(Validator::toInt(*(flds + 0)), Validator::toInt(*(flds + 1)), Validator::toInt(*(flds + 2)), Validator::toInt(*(flds + 3)), *(flds + 4), *(flds + 5), *(flds + 6));
 			s.add(p);
 		}
 		for (int i = 0; i < 20; i++) {
-			delete[] flds[i];
+			delete[] *(flds + i);
 		}
 		delete[] flds;
 	}
@@ -292,65 +258,39 @@ void FileHandler::loadPrescs(Storage<Prescription>& s) {
 
 void FileHandler::addPatient(const Patient& p) {
 	ofstream f("data/patients.txt", ios::app);
-	f << p.getId() << ","
-		<< p.getName() << ","
-		<< p.getAge() << ","
-		<< p.getGender() << ","
-		<< p.getContact() << ","
-		<< p.getPass() << ","
-		<< p.getBal() << endl;
+	f << p.getId() << "," << p.getName() << "," << p.getAge() << "," << p.getGender() << "," << p.getContact() << "," << p.getPass() << "," << p.getBal() << endl;
 	f.close();
 }
 
 void FileHandler::addDoctor(const Doctor& d) {
 	ofstream f("data/doctors.txt", ios::app);
-	f << d.getId() << ","
-		<< d.getName() << ","
-		<< d.getSpec() << ","
-		<< d.getFee() << ","
-		<< d.getContact() << ","
-		<< d.getPass() << endl;
+	f << d.getId() << "," << d.getName() << "," << d.getSpec() << "," << d.getFee() << "," << d.getContact() << "," << d.getPass() << endl;
 	f.close();
 }
 
 void FileHandler::addAppt(const Appointment& a) {
 	ofstream f("data/appointments.txt", ios::app);
-	f << a.getId() << ","
-		<< a.getPid() << ","
-		<< a.getDid() << ","
-		<< a.getDate() << ","
-		<< a.getSlot() << ","
-		<< a.getStat() << endl;
+	f << a.getId() << "," << a.getPid() << "," << a.getDid() << "," << a.getDate() << "," << a.getSlot() << "," << a.getStat() << endl;
 	f.close();
 }
 
 void FileHandler::addBill(const Bill& b) {
 	ofstream f("data/bills.txt", ios::app);
-	f << b.getId() << ","
-		<< b.getPid() << ","
-		<< b.getApid() << ","
-		<< b.getAmount() << ","
-		<< b.getStat() << ","
-		<< b.getDate() << endl;
+	f << b.getId() << "," << b.getPid() << "," << b.getApid() << "," << b.getAmount() << "," << b.getStat() << "," << b.getDate() << endl;
 	f.close();
 }
 
 void FileHandler::addPresc(const Prescription& p) {
 	ofstream f("data/prescriptions.txt", ios::app);
-	f << p.getId() << ","
-		<< p.getApid() << ","
-		<< p.getPid() << ","
-		<< p.getDid() << ","
-		<< p.getDate() << ","
-		<< p.getMeds() << ","
-		<< p.getNotes() << endl;
+	f << p.getId() << "," << p.getApid() << "," << p.getPid() << "," << p.getDid() << "," << p.getDate() << "," << p.getMeds() << "," << p.getNotes() << endl;
 	f.close();
 }
 
+// Add security log entry
 void FileHandler::addSecLog(const char* role, int eid, const char* result) {
 	ofstream f("data/security_log.txt", ios::app);
 
-	// Check if file is empty, if so add header
+	// Add header if file is empty
 	ifstream checkFile("data/security_log.txt");
 	if (checkFile.peek() == ifstream::traits_type::eof()) {
 		f << "timestamp,role,entered_id,result" << endl;
@@ -362,7 +302,7 @@ void FileHandler::addSecLog(const char* role, int eid, const char* result) {
 	tm ltm;
 	localtime_s(&ltm, &now);
 
-	// Format date-time as DD-MM-YYYY HH:MM
+	// Format date-time
 	char timestamp[20];
 	timestamp[0] = (ltm.tm_mday / 10) + '0';
 	timestamp[1] = (ltm.tm_mday % 10) + '0';
@@ -386,14 +326,15 @@ void FileHandler::addSecLog(const char* role, int eid, const char* result) {
 	f.close();
 }
 
+// Update field in file
 void FileHandler::updField(const char* fname, int tid, int fi, const char* val) {
 	ifstream fin(fname);
 	char** lines = new char* [200];
 	for (int i = 0; i < 200; i++) {
-		lines[i] = new char[500];
+		*(lines + i) = new char[500];
 	}
 	int lc = 0;
-	while (fin.getline(lines[lc], 500)) {
+	while (fin.getline(*(lines + lc), 500)) {
 		lc++;
 	}
 	fin.close();
@@ -401,43 +342,44 @@ void FileHandler::updField(const char* fname, int tid, int fi, const char* val) 
 	for (int i = 0; i < lc; i++) {
 		char** flds = new char* [20];
 		for (int j = 0; j < 20; j++) {
-			flds[j] = new char[300];
+			*(flds + j) = new char[300];
 		}
 		int n = 0;
 		char* cp = new char[500];
-		Validator::myCopy(cp, lines[i], 500);
+		Validator::myCopy(cp, *(lines + i), 500);
 		parseLine(cp, flds, n);
-		if (Validator::toInt(flds[0]) == tid) {
-			Validator::myCopy(flds[fi], val, 300);
-			rebuildLine(lines[i], flds, n);
+		if (Validator::toInt(*(flds + 0)) == tid) {
+			Validator::myCopy(*(flds + fi), val, 300);
+			rebuildLine(*(lines + i), flds, n);
 		}
 		delete[] cp;
 		for (int j = 0; j < 20; j++) {
-			delete[] flds[j];
+			delete[] *(flds + j);
 		}
 		delete[] flds;
 	}
 
 	ofstream fout(fname, ios::trunc);
 	for (int i = 0; i < lc; i++) {
-		fout << lines[i] << endl;
+		fout << *(lines + i) << endl;
 	}
 	fout.close();
 
 	for (int i = 0; i < 200; i++) {
-		delete[] lines[i];
+		delete[] *(lines + i);
 	}
 	delete[] lines;
 }
 
+// Delete record from file
 void FileHandler::delRecord(const char* fname, int tid) {
 	ifstream fin(fname);
 	char** lines = new char* [200];
 	for (int i = 0; i < 200; i++) {
-		lines[i] = new char[500];
+		*(lines + i) = new char[500];
 	}
 	int lc = 0;
-	while (fin.getline(lines[lc], 500)) {
+	while (fin.getline(*(lines + lc), 500)) {
 		lc++;
 	}
 	fin.close();
@@ -446,25 +388,25 @@ void FileHandler::delRecord(const char* fname, int tid) {
 	for (int i = 0; i < lc; i++) {
 		char** flds = new char* [20];
 		for (int j = 0; j < 20; j++) {
-			flds[j] = new char[300];
+			*(flds + j) = new char[300];
 		}
 		int n = 0;
 		char* cp = new char[500];
-		Validator::myCopy(cp, lines[i], 500);
+		Validator::myCopy(cp, *(lines + i), 500);
 		parseLine(cp, flds, n);
-		if (Validator::toInt(flds[0]) != tid) {
-			fout << lines[i] << endl;
+		if (Validator::toInt(*(flds + 0)) != tid) {
+			fout << *(lines + i) << endl;
 		}
 		delete[] cp;
 		for (int j = 0; j < 20; j++) {
-			delete[] flds[j];
+			delete[] *(flds + j);
 		}
 		delete[] flds;
 	}
 	fout.close();
 
 	for (int i = 0; i < 200; i++) {
-		delete[] lines[i];
+		delete[] *(lines + i);
 	}
 	delete[] lines;
 }

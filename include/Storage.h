@@ -2,12 +2,12 @@
 #include <iostream>
 using namespace std;
 
-//Storage - generic container, max 100 items
+// Holds up to 100 items of any type
 template <typename T>
 class Storage {
 private:
-	T* data;
-	int cnt;
+	T* data;  // Array to store items
+	int cnt;  // Number of items stored
 public:
 	Storage() {
 		data = new T[100];
