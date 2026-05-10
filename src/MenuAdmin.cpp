@@ -84,8 +84,12 @@ void addDoctorAdmin(sf::RenderWindow& win, sf::Font& font, Storage<Doctor>& drs,
 			if (foc == 4) typeChar(e, pass, 50, lp);
 			if (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::Tab) foc = (foc + 1) % 5;
 			if (isClick(e, 270, 560, 170, 40)) {
-				if (!Validator::chkContact(con) || !Validator::chkPass(pass) || !Validator::chkFloat(feeB)) {
-					Validator::myCopy(msg, "Invalid contact/password/fee.", 140);
+				if (Validator::myLen(name) == 0 || Validator::myLen(spec) == 0 || Validator::myLen(feeB) == 0 || Validator::myLen(con) == 0 || Validator::myLen(pass) == 0) {
+					Validator::myCopy(msg, "All fields are required.", 140);
+					continue;
+				}
+				if (Validator::myLen(con) < 10 || Validator::myLen(pass) < 6 || Validator::toFloat(feeB) <= 0.0f) {
+					Validator::myCopy(msg, "Contact must be at least 10 digits, password at least 6 chars, fee must be positive.", 140);
 					continue;
 				}
 				Doctor d(nextDoctorId(drs), name, spec, Validator::toFloat(feeB), con, pass);

@@ -210,8 +210,8 @@ void writePresc(sf::RenderWindow& win, sf::Font& font, Doctor* d, Storage<Appoin
 					Validator::myCopy(msg, "Appointment not found.", 120);
 				}
 				else {
-					// Check if appointment has status completed
-					if (!Validator::myEq(a->getStat(), "completed")) {
+					// Check if appointment has status completed or done
+					if (!Validator::myEq(a->getStat(), "completed") && !Validator::myEq(a->getStat(), "done")) {
 						Validator::myCopy(msg, "Appointment must be marked as completed first.", 120);
 					} else {
 						// Check if prescription already exists for this appointment ID

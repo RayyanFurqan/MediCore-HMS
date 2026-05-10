@@ -67,14 +67,87 @@ void bookAppt(sf::RenderWindow& win, sf::Font& font, Patient* p, Storage<Doctor>
 				if (step == 0 && Validator::myLen(spec) > 0) {
 					step = 1;
 				}
+				else if (step == 1) {
+					step = 2;
+				}
 				else if (step == 2 && Validator::myLen(didBuf) > 0) {
-					step = 3;
+					int did = Validator::toInt(didBuf);
+					selectedDoctor = drs.findById(did);
+					if (selectedDoctor == nullptr) {
+						Validator::myCopy(msg, "Doctor not found.", 200);
+					} else {
+						step = 3;
+					}
 				}
 				else if (step == 3 && Validator::myLen(date) > 0) {
-					step = 4;
+					if (!Validator::chkDate(date)) {
+						Validator::myCopy(msg, "Invalid date. Use format DD-MM-YYYY.", 200);
+						dateAttempts++;
+						if (dateAttempts >= 3) {
+							step = 0;
+							dateAttempts = 0;
+						}
+					} else {
+						step = 5;
+					}
+				}
+				else if (step == 5) {
+					step = 6;
 				}
 				else if (step == 6 && Validator::myLen(slot) > 0) {
-					step = 7;
+					// Validate slot
+					bool validSlot = false;
+					for (int i = 0; i < 8; i++) {
+						if (Validator::myEq(slot, slots[i])) {
+							validSlot = true;
+							break;
+						}
+					}
+					if (!validSlot) {
+						Validator::myCopy(msg, "Invalid time slot. Choose from available slots.", 200);
+					} else {
+						// Check if slot is available
+						bool slotTaken = false;
+						for (int i = 0; i < apts.size(); i++) {
+							Appointment& a = apts.getAll()[i];
+							if (a.getDid() == selectedDoctor->getId() && Validator::myEq(a.getDate(), date) && Validator::myEq(a.getSlot(), slot) && !Validator::myEq(a.getStat(), "cancelled")) {
+								slotTaken = true;
+								break;
+							}
+						}
+						if (slotTaken) {
+							Validator::myCopy(msg, "SlotUnavailableException: Slot already taken.", 200);
+							step = 5;
+						} else {
+							// Check patient balance
+							if (p->getBal() < selectedDoctor->getFee()) {
+								Validator::myCopy(msg, "InsufficientFundsException: Insufficient balance for appointment fee.", 200);
+								step = 0;
+							} else {
+								// Book appointment
+								Appointment newAppt(nextApptId(apts), p->getId(), selectedDoctor->getId(), date, slot, "pending");
+								apts.add(newAppt);
+								fh.addAppt(newAppt);
+								
+								// Create bill
+								Bill newBill(nextBillId(bls), p->getId(), newAppt.getId(), selectedDoctor->getFee(), "unpaid", date);
+								bls.add(newBill);
+								fh.addBill(newBill);
+								
+								// Update patient balance
+								*p -= selectedDoctor->getFee();
+								fh.updField("data/patients.txt", p->getId(), 6, "");
+								char temp[50];
+								Validator::floatToStr(p->getBal(), temp);
+								fh.updField("data/patients.txt", p->getId(), 6, temp);
+								
+								char successMsg[200];
+								snprintf(successMsg, sizeof(successMsg), "Appointment booked successfully. Appointment ID: %d.", newAppt.getId());
+								Validator::myCopy(msg, successMsg, 200);
+								step = 8;
+							}
+						}
+					}
 				}
 			}
 			
@@ -199,9 +272,10 @@ void bookAppt(sf::RenderWindow& win, sf::Font& font, Patient* p, Storage<Doctor>
 					y += 25;
 				}
 			}
-			drawTxt(win, "Enter Doctor ID:", 130, y + 20, font, 14, sf::Color(180, 200, 255));
-			drawBox(win, 130, y + 45, 620, 38, didBuf, font, true);
-			step = 2;
+			drawTxt(win, "Press Enter to continue...", 130, y + 20, font, 14, sf::Color(180, 200, 255));
+		} else if (step == 2) {
+			drawTxt(win, "Enter Doctor ID:", 130, 120, font, 14, sf::Color(180, 200, 255));
+			drawBox(win, 130, 145, 620, 38, didBuf, font, true);
 		} else if (step == 3) {
 			drawTxt(win, "Enter date (DD-MM-YYYY):", 130, 120, font, 14, sf::Color(180, 200, 255));
 			drawBox(win, 130, 145, 620, 38, date, font, true);
@@ -227,8 +301,10 @@ void bookAppt(sf::RenderWindow& win, sf::Font& font, Patient* p, Storage<Doctor>
 				drawTxt(win, slotInfo, 130, (float)y, font, 14, sf::Color(210, 220, 240));
 				y += 25;
 			}
-			drawTxt(win, "Enter time slot (e.g. 09:00):", 130, y + 20, font, 14, sf::Color(180, 200, 255));
-			drawBox(win, 130, y + 45, 620, 38, slot, font, true);
+			drawTxt(win, "Press Enter to continue...", 130, y + 20, font, 14, sf::Color(180, 200, 255));
+		} else if (step == 6) {
+			drawTxt(win, "Enter time slot (e.g. 09:00):", 130, 120, font, 14, sf::Color(180, 200, 255));
+			drawBox(win, 130, 145, 620, 38, slot, font, true);
 		} else if (step == 8) {
 			drawTxt(win, "Appointment booked successfully!", 130, 120, font, 14, sf::Color(180, 200, 255));
 		}
@@ -254,6 +330,7 @@ void cancelAppt(sf::RenderWindow& win, sf::Font& font, Patient* p, Storage<Appoi
 			if (e.type == sf::Event::Closed) {
 				win.close();
 			}
+			typeChar(e, idBuf, 20, len);
 			if (displayPending) {
 				// Display pending appointments for this patient
 				bool hasPending = false;
@@ -268,48 +345,46 @@ void cancelAppt(sf::RenderWindow& win, sf::Font& font, Patient* p, Storage<Appoi
 					Validator::myCopy(msg, "You have no pending appointments.", 200);
 					displayPending = false;
 				}
-			} else {
-				typeChar(e, idBuf, 20, len);
-				if (isClick(e, 290, 300, 150, 40)) {
-					int id = Validator::toInt(idBuf);
-					bool found = false;
-					for (int i = 0; i < apts.size(); i++) {
-						Appointment& a = apts.getAll()[i];
-						if (a.getId() == id && a.getPid() == p->getId() && Validator::myEq(a.getStat(), "pending")) {
-							// Find doctor for fee refund
-							Doctor* dr = drs.findById(a.getDid());
-							if (dr != nullptr) {
-								// Update appointment status to cancelled
-								a.setStat("cancelled");
-								fh.updField("data/appointments.txt", id, 5, "cancelled");
-								
-								// Refund fee to patient balance
-								*p += dr->getFee();
-								char temp[50];
-								Validator::floatToStr(p->getBal(), temp);
-								fh.updField("data/patients.txt", p->getId(), 6, temp);
-								
-								// Update corresponding bill status to cancelled
-								for (int j = 0; j < bls.size(); j++) {
-									Bill& b = bls.getAll()[j];
-									if (b.getApid() == id) {
-										b.setStat("cancelled");
-										fh.updField("data/bills.txt", b.getId(), 4, "cancelled");
-										break;
-									}
+			}
+			if (isClick(e, 290, 300, 150, 40)) {
+				int id = Validator::toInt(idBuf);
+				bool found = false;
+				for (int i = 0; i < apts.size(); i++) {
+					Appointment& a = apts.getAll()[i];
+					if (a.getId() == id && a.getPid() == p->getId() && Validator::myEq(a.getStat(), "pending")) {
+						// Find doctor for fee refund
+						Doctor* dr = drs.findById(a.getDid());
+						if (dr != nullptr) {
+							// Update appointment status to cancelled
+							a.setStat("cancelled");
+							fh.updField("data/appointments.txt", id, 5, "cancelled");
+							
+							// Refund fee to patient balance
+							*p += dr->getFee();
+							char temp[50];
+							Validator::floatToStr(p->getBal(), temp);
+							fh.updField("data/patients.txt", p->getId(), 6, temp);
+							
+							// Update corresponding bill status to cancelled
+							for (int j = 0; j < bls.size(); j++) {
+								Bill& b = bls.getAll()[j];
+								if (b.getApid() == id) {
+									b.setStat("cancelled");
+									fh.updField("data/bills.txt", b.getId(), 4, "cancelled");
+									break;
 								}
-								
-								char successMsg[200];
-								snprintf(successMsg, sizeof(successMsg), "Appointment cancelled. PKR %.2f refunded to your balance.", dr->getFee());
-								Validator::myCopy(msg, successMsg, 200);
 							}
-							found = true;
-							break;
+							
+							char successMsg[200];
+							snprintf(successMsg, sizeof(successMsg), "Appointment cancelled. PKR %.2f refunded to your balance.", dr->getFee());
+							Validator::myCopy(msg, successMsg, 200);
 						}
+						found = true;
+						break;
 					}
-					if (!found) {
-						Validator::myCopy(msg, "Invalid appointment ID.", 200);
-					}
+				}
+				if (!found) {
+					Validator::myCopy(msg, "Invalid appointment ID.", 200);
 				}
 			}
 			if (isClick(e, 460, 300, 150, 40)) {
